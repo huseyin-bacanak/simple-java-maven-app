@@ -9,6 +9,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'mvn help:effective-settings'
+                sh 'id'
                 sh 'mvn -B -DskipTests clean package'
             }
         }
