@@ -1,8 +1,11 @@
+DOCKER_MAVEN_IMAGE = 'maven:3.5.2-jdk-8-alpine'
+DOCKER_MAVEN_ARGS = '-v $HOME/.m2:/root/.m2'
+
 pipeline {
     agent {
         docker {
-            image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
+            image DOCKER_MAVEN_IMAGE
+            args DOCKER_MAVEN_ARGS
         }
     }
     stages {
@@ -13,8 +16,14 @@ pipeline {
         }
 
         stage('Test') {
-            steps{
+            steps {
                 sh 'mvn test'
+            }
+
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
             }
         }
     }
