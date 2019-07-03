@@ -12,6 +12,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                sh 'mvn help:evaluate -Dexpression=settings.localRepository | grep -v \'\\[INFO\\]\''
                 sh 'mvn -B -DskipTests clean package'
             }
         }
