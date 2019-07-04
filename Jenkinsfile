@@ -8,8 +8,6 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn help:effective-settings'
-                sh 'id'
                 sh 'mvn -B -DskipTests clean package'
             }
         }
@@ -23,9 +21,17 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') {
+        stage('Sonarqube') {
+            environment {
+                scannerHome = tool 'SonarQubeScanner'
+            }
             steps {
-                sh './jenkins/scripts/deliver.sh'
+                withSonarQubeEnv('sonarqube') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
     }
